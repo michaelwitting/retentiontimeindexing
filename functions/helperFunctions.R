@@ -207,8 +207,6 @@ plot_rti_comparison <- function(plot_data, xlab = "", ylab = "", main = "") {
     ggtitle(main) +
     theme_bw()
   
-  print(p1)
-  
   p2 <- ggplot(plot_data, aes(x = x, y = diff)) +
     geom_point() +
     geom_errorbar(aes(ymin = 0 - xsd, ymax = 0 + xsd), colour = "darkgray") +
@@ -223,8 +221,6 @@ plot_rti_comparison <- function(plot_data, xlab = "", ylab = "", main = "") {
     ylab(paste0("difference (", ylab, " - ", xlab, ")")) +
     ggtitle(main) +
     theme_bw()
-  
-  print(p2)
   
   p3 <- ggplot(plot_data[which(plot_data$x > 300),], aes(x = x, y = diff)) +
     geom_point() +
@@ -241,7 +237,7 @@ plot_rti_comparison <- function(plot_data, xlab = "", ylab = "", main = "") {
     ggtitle(main) +
     theme_bw()
   
-  print(p3)
+  p1 | p2 | p3
   
 }
 
@@ -271,7 +267,7 @@ read_data <- function(xlsx_file, plates) {
     # read negative mode data
     plate_df <- read_xlsx(xlsx_file,
                           sheet = plate,
-                          range = "AH2:AR138",
+                          range = "P2:Z138",
                           na = "n.d.") %>% 
       filter(!is.na(Name))
     
@@ -339,7 +335,7 @@ read_rt_data <- function(xlsx_file, plates) {
     # read negative mode data
     plate_df <- read_xlsx(xlsx_file,
                           sheet = plate,
-                          range = "AH2:AR138",
+                          range = "P2:Z138",
                           na = "n.d.") %>% 
       filter(!is.na(Name))
     

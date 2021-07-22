@@ -1,14 +1,3 @@
-# load required libraries ------------------------------------------------------
-library(MetaboCoreUtils)
-library(akima)
-library(tidyverse)
-library(readxl)
-library(ggrepel)
-library(ggforce)
-
-# load required functions ------------------------------------------------------
-source("00_helperFunctions.R")
-
 # setup plates to read ---------------------------------------------------------
 plates <- c("Plate 1",
             "Plate 2",
@@ -26,7 +15,7 @@ full_data_neg <- tibble()
 for(plate in plates) {
   
   # read positive mode data
-  plate_df <- read_xlsx("E:/04_BGC/Project Data/Metabolomics standardization/Quillliam/RTI/20210601/01_TotalData_InitialRIDatabase_ver2.xlsx",
+  plate_df <- read_xlsx("data/01/01_TotalData_InitialRIDatabase_ver2.xlsx",
                         sheet = plate,
                         range = "A2:K138",
                         na = "n.d.") %>% 
@@ -40,9 +29,9 @@ for(plate in plates) {
                              clipboard)
   
   # read negative mode data
-  plate_df <- read_xlsx("E:/04_BGC/Project Data/Metabolomics standardization/Quillliam/RTI/20210601/01_TotalData_InitialRIDatabase_ver2.xlsx",
+  plate_df <- read_xlsx("data/01/01_TotalData_InitialRIDatabase_ver2.xlsx",
                         sheet = plate,
-                        range = "AH2:AR138",
+                        range = "P2:Z138",
                         na = "n.d.") %>% 
     filter(!is.na(Name))
   
@@ -206,15 +195,8 @@ full_data_pos_linear <- full_data_pos %>%
 
 full_data <- full_join(full_data_neg_linear,
                        full_data_pos_linear,
-                       by = c("plate" ,
-                              "No.",
-                              "Name",
-                              "SMILES",
-                              "RTI",                 
-                              "exact mass",
-                              "formula",
-                              "logP",
-                              "Mix"),
+                       by = c("plate", "No.", "Name", "SMILES", "RTI", 
+                              "exact mass", "formula", "logP", "Mix"),
           suffix = c("_neg", "_pos"))
 
 
@@ -225,9 +207,9 @@ plot_data <- tibble(x = full_data$rti_linear_average_mean_pos,
                     diff = full_data$rti_linear_average_mean_neg - full_data$rti_linear_average_mean_pos)
 
 plot_rti_comparison(plot_data,
-                    xlab = "spline, average",
-                    ylab = "Akima, average",
-                    main = "spline vs Akima, (-)-mode")
+                    xlab = "linear, average, (+)-mode",
+                    ylab = "linear, average, (-)-mode",
+                    main = "(+)- vs (-)-mode")
 
 # testing if differences are systematic
 full_data %>% mutate(diff = rti_linear_average_mean_neg - rti_linear_average_mean_pos,
